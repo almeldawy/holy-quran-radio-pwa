@@ -8,15 +8,14 @@
   "theme_color": "#2193b0",
   "icons": [
     {
-      "src": "favicon.png",
+      "src": "/holy-quran-radio-pwa/favicon.png", // <--- Chemin corrigé ici
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "favicon.png",
+      "src": "/holy-quran-radio-pwa/favicon.png", // <--- Et ici
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
 }
-Mise à jour du start_url dans le manifeste pour GitHub Pages
