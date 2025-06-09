@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio du Coran - Arabie Saoudite</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjahTvuYHpdBNjT2cqAy_1sSG231UVF-rXLGjXScmnBNZnyr0OSqD3To0IihyphenhyphenZ2KeaGWNBAlZ7fjxqSZW4rd4JiIxJtHlR4RUKP-XY3J36A0UlEE9EmMJWN-bcroaHo3ryO36ATwSVFp-lmvbPVwdq2VxEZjimwK5oZS6Fi2wphiyu2HzW16HJetDal0zv1/s16000/umrah-2.webp');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+        .radio-container {
+            background-color: #ffffffcc;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .radio-container img {
+            height: 120px;
+            margin-bottom: 00px;
+        }
+        h1 {
+            color: #2193b0;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .player-button {
+            background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+        .player-button.playing {
+            background: linear-gradient(to bottom, #dc2626, #ef4444);
+            color: white;
+        }
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 80%;
+            max-width: 300px;
+        }
+        #volumeSlider {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 5px;
+        }
+        #volumeSlider::-webkit-slider-thumb,
+        #volumeSlider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2193b0;
+            cursor: pointer;
+        }
+        .tagline {
+            margin-top: 30px;
+            font-size: 1.1em;
+            color: #444;
+        }
+        @media (min-width: 600px) {
+            .player-controls {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="radio-container">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhwzbQZ3iHzbzjW6-akYWlYamGn1hbWq2_hidaZDTD3I4nIUjhNl4ah9F1T3akY1ZTdSD80KXCKSKCHnOsWHMgFl-VSezptKUZdx5FpVnqnqkduHz5sT97uSv8xCDoBUSMDHF0Xv2WddWVBd3WRSG_le65hCSwD_8TKntKRT7noD6vugTwaU3LuXC_msRTZ/s16000/3dK88qLo_400x400.jpg" alt="Logo Radio Coran">
+        <h1>إذاعة القران الكريم</h1>
+        <div class="player-controls">
+            <audio id="radioStream" aria-label="Flux audio en direct de la Radio du Coran">
+                <source src="https://stream.radiojar.com/4wqre23fytzuv" type="audio/mpeg">
+                Votre navigateur ne supporte pas l'élément audio.
+            </audio>
+            <button id="playPauseButton" class="player-button" aria-pressed="false" aria-label="Lecture/Pause">
+                <i class="fas fa-play"></i> Écouter
+            </button>
+            <div class="volume-control">
+                <i class="fas fa-volume-down"></i>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+                <i class="fas fa-volume-up"></i>
+            </div>
+        </div>
+        <p class="tagline">استمع الآن إلى إذاعة القرآن الكريم</p>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const radioStream = document.getElementById('radioStream');
+            const playPauseButton = document.getElementById('playPauseButton');
+            const volumeSlider = document.getElementById('volumeSlider');
+
+            radioStream.volume = volumeSlider.value;
+
+            playPauseButton.addEventListener('click', () => {
+                if (radioStream.paused) {
+                    radioStream.play().then(() => {
+                        playPauseButton.innerHTML = '<i class="fas fa-pause"></i> Pause';
+                        playPauseButton.classList.add('playing');
+                        playPauseButton.setAttribute('aria-pressed', 'true');
+                    }).catch(error => {
+                        showMessageBox("La lecture automatique a été bloquée. Veuillez cliquer pour jouer.", "error");
+                    });
+                } else {
+                    radioStream.pause();
+                    playPauseButton.innerHTML = '<i class="fas fa-play"></i> Écouter';
+                    playPauseButton.classList.remove('playing');
+                    playPauseButton.setAttribute('aria-pressed', 'false');
+                }
+            });
+
+            volumeSlider.addEventListener('input', () => {
+                radioStream.volume = volumeSlider.value;
+            });
+
+            radioStream.addEventListener('error', () => {
+                showMessageBox("Le flux est indisponible. Veuillez réessayer plus tard.", "error");
+            });
+
+            function showMessageBox(message, type = "info") {
+                let box = document.getElementById('customMessageBox');
+                if (!box) {
+                    box = document.createElement('div');
+                    box.id = 'customMessageBox';
+                    box.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: white;
+                        padding: 20px;
+                        border-radius: 10px;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                        z-index: 1000;
+                        text-align: center;
+                        max-width: 300px;
+                        font-family: 'Inter', sans-serif;
+                    `;
+                    document.body.appendChild(box);
+                }
+                box.innerHTML = `
+                    <p>${message}</p>
+                    <button style="margin-top: 15px; padding: 8px 15px; background: #2193b0; color: white; border: none; border-radius: 5px; cursor: pointer;">OK</button>
+                `;
+                box.querySelector('button').onclick = () => box.remove();
+            }
+        });
+    </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+    });
+  }
+</script>
+</body>
+</html>
+

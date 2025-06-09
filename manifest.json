@@ -1,0 +1,21 @@
+{
+  "name": "Radio du Coran",
+  "short_name": "Radio Coran",
+  "description": "Écoutez la Radio du Coran en direct d'Arabie Saoudite",
+  "start_url": "/radio_du_Coran_Arabie_Saoudite.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2193b0",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
