@@ -2,7 +2,7 @@
   "name": "Radio du Coran",
   "short_name": "Radio Coran",
   "description": "Écoutez la Radio du Coran en direct d'Arabie Saoudite",
-  "start_url": "/radio_du_Coran_Arabie_Saoudite.html",
+  "start_url": "/holy-quran-radio-pwa/radio_du_Coran_Arabie_Saoudite.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2193b0",
@@ -19,3 +19,4 @@
     }
   ]
 }
+Mise à jour du start_url dans le manifeste pour GitHub Pages
