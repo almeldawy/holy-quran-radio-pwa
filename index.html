@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0f172a">
     <title>Radio du Saint Coran - Arabie Saoudite</title>
-    
+
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhwzbQZ3iHzbzjW6-akYWlYamGn1hbWq2_hidaZDTD3I4nIUjhNl4ah9F1T3akY1ZTdSD80KXCKSKCHnOsWHMgFl-VSezptKUZdx5FpVnqnqkduHz5sT97uSv8xCDoBUSMDHF0Xv2WddWVBd3WRSG_le65hCSwD_8TKntKRT7noD6vugTwaU3LuXC_msRTZ/s16000/3dK88qLo_400x400.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -61,7 +62,6 @@
         h1 { font-family: 'Amiri', serif; font-size: 2.2rem; color: var(--primary); }
         .subtitle { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; }
 
-        /* --- STYLES DU BOUTON PLAY CORRIGÉS --- */
         .play-btn { 
             width: 85px; 
             height: 85px; 
@@ -86,25 +86,26 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         #playIcon {
-            margin-left: 5px; /* Équilibre visuel pour le triangle Play */
+            margin-left: 5px; 
             transition: margin 0.2s;
         }
         .play-btn.playing-ui #playIcon {
-            margin-left: 0; /* Centrage parfait pour l'icône Pause */
+            margin-left: 0; 
         }
-        /* -------------------------------------- */
 
         .volume-container { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.1); padding: 12px 20px; border-radius: 100px; margin-top: 25px; }
         input[type="range"] { flex: 1; accent-color: var(--primary); }
         .quran-quote { margin-top: 30px; font-family: 'Amiri', serif; font-size: 1.1rem; color: var(--primary); }
         .quran-quote span { display: block; margin-top: 10px; font-size: 0.8rem; font-family: 'Inter'; color: var(--text-dim); }
         .footer-text { margin-top: 25px; font-size: 0.7rem; color: var(--text-dim); opacity: 0.6; }
+        
+        /* La bulle d'erreur (déjà présente dans ton code) */
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; padding: 10px 20px; border-radius: 10px; display: none; z-index: 1000; }
     </style>
 </head>
 <body>
     <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
-    
+
     <div class="main-card">
         <div class="visualizer" id="visualizer">
             <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -115,9 +116,9 @@
         </div>
         <h1 dir="rtl">إِذَاعَةُ القُرْآنِ الكَرِيم</h1>
         <p class="subtitle">Radio Coran - KSA</p>
-        
+
         <button class="play-btn" id="masterPlayBtn"><i class="fas fa-play" id="playIcon"></i></button>
-        
+
         <div class="volume-container">
             <i class="fas fa-volume-down" style="color: var(--text-dim)"></i>
             <input type="range" id="volumeCtrl" min="0" max="1" step="0.01" value="0.7">
@@ -148,31 +149,76 @@
         const visualizer = document.getElementById('visualizer');
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
+        
+        // [AJOUT] On isole l'URL de la radio et on récupère le bloc d'erreur HTML pour l'utiliser
+        const streamUrl = "https://stream.radiojar.com/4wqre23fytzuv";
+        const errorToast = document.getElementById('errorToast');
 
         if (localStorage.getItem('theme') === 'light') enableLightMode();
         themeToggle.addEventListener('click', () => document.body.classList.contains('light-mode') ? disableLightMode() : enableLightMode());
-        
+
         function enableLightMode() { document.body.classList.add('light-mode'); themeIcon.className = 'fas fa-sun'; localStorage.setItem('theme', 'light'); }
         function disableLightMode() { document.body.classList.remove('light-mode'); themeIcon.className = 'fas fa-moon'; localStorage.setItem('theme', 'dark'); }
 
+        // [AJOUT] Fonction pour faire apparaître la bulle rouge d'erreur pendant 3 secondes
+        function showError(message) {
+            errorToast.innerText = message;
+            errorToast.style.display = 'block';
+            setTimeout(() => {
+                errorToast.style.display = 'none';
+            }, 3000);
+        }
+
         playBtn.addEventListener('click', () => {
             if (audio.paused) {
-                if (audio.readyState === 0) audio.load();
-                audio.play().then(() => updateUI(true)).catch(() => console.log("Erreur"));
+                // [MODIFICATION] Pour un direct, on force le rechargement de l'URL source
+                // pour être sûr de se connecter au temps "présent" et non à un vieux buffer gardé en mémoire
+                audio.src = streamUrl;
+                audio.load();
+                
+                // [MODIFICATION] Si la lecture plante (pas d'internet, serveur en panne...), 
+                // on affiche la bulle d'erreur et on remet le bouton en mode Play.
+                audio.play().then(() => updateUI(true)).catch((err) => {
+                    console.log("Erreur de lecture : ", err);
+                    showError("Connexion au direct impossible.");
+                    updateUI(false);
+                });
             } else {
                 audio.pause();
+                // [AJOUT] On vide la source audio sur "pause" pour éviter que le navigateur 
+                // continue de télécharger silencieusement le direct en arrière-plan.
+                audio.src = "";
                 updateUI(false);
             }
+        });
+
+        // [AJOUT] Cet écouteur surveille si la radio coupe d'un coup (micro-coupure réseau)
+        audio.addEventListener('waiting', () => {
+            // Le son est coupé le temps de charger : on arrête les petites barres animées
+            visualizer.classList.remove('playing');
+        });
+
+        // [AJOUT] Cet écouteur se déclenche quand le son repart après une micro-coupure
+        audio.addEventListener('playing', () => {
+            // Le son est de retour : on relance les barres et on s'assure que le bouton est sur Pause
+            updateUI(true);
+        });
+
+        // [AJOUT] Cet écouteur se déclenche si la connexion est définitivement perdue
+        audio.addEventListener('error', () => {
+            showError("Le flux de la radio a été perdu.");
+            updateUI(false); // On remet l'interface à zéro (bouton Play, pas d'animation)
         });
 
         function updateUI(isPlaying) {
             playIcon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
             visualizer.classList.toggle('playing', isPlaying);
-            // On ajoute/enlève la classe pour le centrage de l'icône
             playBtn.classList.toggle('playing-ui', isPlaying);
         }
-        
+
         document.getElementById('volumeCtrl').addEventListener('input', (e) => audio.volume = e.target.value);
     </script>
 </body>
 </html>
+
+```
